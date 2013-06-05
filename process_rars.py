@@ -12,6 +12,8 @@
 import argparse
 import os
 import glob
+import tempfile
+import shutil
 
 # Constants:
 version = '0.1'
@@ -46,12 +48,10 @@ def get_args():
 
 
 def main():
-    """
-    """
     args = get_args()
 
     if not os.path.exists(args.source):
-            raise Exception("File or directory %s doesn't exist!" % args.input)
+            raise Exception("Directory %s doesn't exist!" % args.source)
 
     # data source:
     source = os.path.abspath(args.source)
@@ -59,14 +59,37 @@ def main():
     source = [source] if os.path.isfile(source) else set(
                 glob.glob(os.path.join(source, '*.rar'))
                 + glob.glob(os.path.join(source, '*.RAR'))
-            )
+             )
 
     # loop via found files
-    #  1. Check this folder for all .rar files: `/DMDS/9.Vuze/1.Share/*.rar`
-    #  2. Copies all files into a temporary file folder
-    #  3. CRC check all .rar files:
-    #  4. If file is corrupted .rar file gets deleted.
-    #  5. Each rar file has a two additional files that also gets deleted if file I corrupt.
+    for fn in source:
+        #  1. Check this folder for all .rar files
+        #  2. Copy file into a temporary file folder
+        bfn = os.path.basename(fn)  # base file name
+        if args.verbose:
+            print "* Processing file '%s'" % bfn
+        cfn = os.path.join(tempfile.gettempdir(), bfn)  # compy file name
+        shutil.copyfile(fn, cfn)
+
+        #  3. CRC check all .rar files:
+        unrar_test = os.popen("unrar t %s" % cfn)
+        # last line is "All OK"
+        is_all_ok = (unrar_test.read().splitlines()[-1] == 'All OK')
+        #  4. If file is corrupted .rar file gets deleted.
+        if not is_all_ok:
+            print "* File", fn, "is corrupted..."
+            #  5. Each rar file has a two additional files
+            #     that also gets deleted if file is corrupt.
+            fname = os.path.splitext(fn)[0]  # file name w/o extension
+            for fe in ['.rar', '.mvg', '.id']:  # file extension to delete
+                try:
+                    fn_ = fname + fe
+                    os.remove(fn_)
+                    print "** '%s' deleted" % fn_
+                except:
+                    print "ERROR: couln't delete file '%s'" % fn_
+        elif args.verbose:
+            print "* File", fn, "is valid..."
 
 if __name__ == '__main__':
     main()
