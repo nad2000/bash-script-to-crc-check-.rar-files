@@ -34,7 +34,8 @@ def get_args():
 
     parser = argparse.ArgumentParser(description='RAR validation',
                                      conflict_handler='resolve')
-    parser.add_argument('--source', '-s', help='File location directory',
+    parser.add_argument('--source', '-s', help="File location directory (default: '%s')" \
+                        % default_source_dir,
                         default=default_source_dir)
     parser.add_argument('--dest', '-d', help='File destination directory',
                         default=default_dest_dir)
