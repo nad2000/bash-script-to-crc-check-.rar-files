@@ -8,7 +8,7 @@ Script performs following steps:
 
     unrar t %rar-filenname% > results.mvg
 
-Check each rar files results.mvg for word "All OK" if word is not found file is corrupted.
+  Check each rar files results.mvg for word "All OK" if word is not found file is corrupted.
 
 4. If file is corrupted .rar file gets deleted.
 5. Each rar file has a two additional files that also gets deleted if file I corrupt.
@@ -23,4 +23,5 @@ These files should be deleted also.
 So it's: %rar-filename%.rar
 %rar-filename%.mvg
 %rar-filename%.id
+
 
