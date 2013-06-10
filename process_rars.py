@@ -39,6 +39,7 @@ def get_args():
                         default=default_source_dir)
     parser.add_argument('--dest', '-d', help='File destination directory',
                         default=default_dest_dir)
+    parser.add_argument('--password', '-P', help='RAR file password', required=False)
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
                         help='Prints out extra information (default: false)')
     parser.add_argument('--version', action='version',
@@ -49,10 +50,19 @@ def get_args():
 
 
 def main():
+
     args = get_args()
 
     if not os.path.exists(args.source):
-            raise Exception("Directory %s doesn't exist!" % args.source)
+        raise Exception("Directory %s doesn't exist!" % args.source)
+
+    flag_file_name = os.path.join(tempfile.gettempdir(), 'crc-check-is-running.mvg')
+    if os.path.exists(flag_file_name):
+        raise Exception("Process is already running ...")
+
+    flag = open(flag_file_name,'w')
+    print >>flag, datetime.datetime.now()
+    flag.close()
 
     # data source:
     source = os.path.abspath(args.source)
@@ -73,7 +83,11 @@ def main():
         shutil.copyfile(fn, cfn)
 
         #  3. CRC check all .rar files:
-        unrar_test = os.popen("unrar t %s" % cfn)
+        options =""
+        if args.password != "":
+            options += " -p"+args.password
+        unrar_test_cmd = "unrar t %s %s" % (options,cfn)
+        unrar_test = os.popen(unrar_test_cmd)
         # last line is "All OK"
         is_all_ok = (unrar_test.read().splitlines()[-1] == 'All OK')
         #  4. If file is corrupted .rar file gets deleted.
@@ -91,6 +105,8 @@ def main():
                     print "ERROR: couln't delete file '%s'" % fn_
         elif args.verbose:
             print "* File", fn, "is valid..."
+
+        os.remove(flag_file_name)
 
 if __name__ == '__main__':
     main()
