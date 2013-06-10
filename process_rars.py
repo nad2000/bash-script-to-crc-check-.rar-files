@@ -16,7 +16,7 @@ import tempfile
 import shutil
 
 # Constants:
-version = '0.1'
+version = '0.2'
 default_source_dir = '/DMDS/9.Vuze/1.Share'  # Default file location directry
 default_dest_dir   = default_source_dir      # Default destination directory
 
