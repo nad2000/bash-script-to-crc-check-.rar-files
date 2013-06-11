@@ -41,7 +41,8 @@ def get_args():
                         default=default_source_dir)
     parser.add_argument('--dest', '-d', help='File destination directory',
                         default=default_dest_dir)
-    parser.add_argument('--password', '-P', help='RAR file password', required=False)
+    parser.add_argument('--password', '-P', help='RAR file password', required=False,
+                        default="")
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
                         help='Prints out extra information (default: false)')
     parser.add_argument('--version', action='version',
