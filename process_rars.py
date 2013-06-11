@@ -20,7 +20,7 @@ import datetime
 version = '0.2'
 default_source_dir = '/DMDS/9.Vuze/1.Share'  # Default file location directry
 default_dest_dir   = default_source_dir      # Default destination directory
-default_password   = "PASSWORD"              # Default RAR file password
+default_password   = ""                      # Default RAR file password
 
 
 def get_args():
