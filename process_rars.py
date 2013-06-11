@@ -14,6 +14,7 @@ import os
 import glob
 import tempfile
 import shutil
+import datetime
 
 # Constants:
 version = '0.2'
@@ -64,7 +65,7 @@ def main():
     flag = open(flag_file_name,'w')
     print >>flag, datetime.datetime.now()
     flag.close()
-    
+
     # RAR file password:
     if args.source != "":
         password = args.source
@@ -82,7 +83,7 @@ def main():
     # RAR command options:
     options =""
     if password != "":
-        options += " -p"+args.password
+        options += " -p"+password
 
     # loop via found files
     for fn in source:
@@ -115,7 +116,7 @@ def main():
         elif args.verbose:
             print "* File", fn, "is valid..."
 
-        os.remove(flag_file_name)
+    os.remove(flag_file_name)
 
 if __name__ == '__main__':
     main()
