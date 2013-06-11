@@ -19,6 +19,7 @@ import shutil
 version = '0.2'
 default_source_dir = '/DMDS/9.Vuze/1.Share'  # Default file location directry
 default_dest_dir   = default_source_dir      # Default destination directory
+default_password   = ""                      # Default RAR file password
 
 
 def get_args():
@@ -63,6 +64,12 @@ def main():
     flag = open(flag_file_name,'w')
     print >>flag, datetime.datetime.now()
     flag.close()
+    
+    # RAR file password:
+    if args.source != "":
+        password = args.source
+    else:
+        password = default_password
 
     # data source:
     source = os.path.abspath(args.source)
@@ -71,6 +78,11 @@ def main():
                 glob.glob(os.path.join(source, '*.rar'))
                 + glob.glob(os.path.join(source, '*.RAR'))
              )
+
+    # RAR command options:
+    options =""
+    if password != "":
+        options += " -p"+args.password
 
     # loop via found files
     for fn in source:
@@ -83,9 +95,6 @@ def main():
         shutil.copyfile(fn, cfn)
 
         #  3. CRC check all .rar files:
-        options =""
-        if args.password != "":
-            options += " -p"+args.password
         unrar_test_cmd = "unrar t %s %s" % (options,cfn)
         unrar_test = os.popen(unrar_test_cmd)
         # last line is "All OK"
